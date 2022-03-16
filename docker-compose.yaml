@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: "./nginx"
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    links:
+      - php
+    volumes:
+      - "./www/html/:/var/www/html/"
+    depends_on:
+      - php
+
+  php:
+    build: "./php"
+    image: php:8.0-fpm
+    container_name: php-container
+    expose:
+      - 9000
+    volumes:
+      - "./www/html/:/var/www/html/"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    depends_on:
+      - mysql-data
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456@abc
+      MYSQL_DATABASE: php_database
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: p@ssword123
+      MYSQL_ROOT_HOST: "0.0.0.0"
+    volumes:
+      - "/var/lib/mysql"
